@@ -1,0 +1,2 @@
+// Implements a style of query merging in which two queries are merged together
+// under one root query and given aliases.
