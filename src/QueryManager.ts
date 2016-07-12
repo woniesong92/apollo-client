@@ -320,17 +320,22 @@ export class QueryManager {
             console.error('Unhandled error', apolloError, apolloError.stack);
           }
         } else {
-          const resultFromStore = readSelectionSetFromStore({
-            store: this.getDataWithOptimisticResults(),
-            rootId: queryStoreValue.query.id,
-            selectionSet: queryStoreValue.query.selectionSet,
-            variables: queryStoreValue.variables,
-            returnPartialData: options.returnPartialData,
-            fragmentMap: queryStoreValue.fragmentMap,
-          });
-
-          if (observer.next) {
-            observer.next({ data: resultFromStore });
+          try {
+            const resultFromStore = readSelectionSetFromStore({
+              store: this.getApolloState().data,
+              rootId: queryStoreValue.query.id,
+              selectionSet: queryStoreValue.query.selectionSet,
+              variables: queryStoreValue.variables,
+              returnPartialData: options.returnPartialData,
+              fragmentMap: queryStoreValue.fragmentMap,
+            });
+            if (observer.next) {
+              observer.next({ data: resultFromStore });
+            }
+          } catch (error) {
+            if (observer.error) {
+              observer.error(error);
+            }
           }
         }
       }
